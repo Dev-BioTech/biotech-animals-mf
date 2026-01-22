@@ -349,33 +349,45 @@ export const animalService = {
 // ============================================================================
 
 const MOCK_BREEDS = [
-  { id: 1, name: "Holstein" },
-  { id: 2, name: "Angus" },
-  { id: 3, name: "Jersey" },
-  { id: 4, name: "Brahman" },
-  { id: 5, name: "Simmental" },
-  { id: 6, name: "Charolais" },
+  { id: "1", name: "Holstein" },
+  { id: "2", name: "Angus" },
+  { id: "3", name: "Jersey" },
+  { id: "4", name: "Brahman" },
+  { id: "5", name: "Simmental" },
+  { id: "6", name: "Charolais" },
+  { id: "7", name: "Merino" },
+  { id: "8", name: "Duroc" },
+  { id: "9", name: "Yorkshire" },
 ];
 
 const MOCK_CATEGORIES = [
-  { id: 1, name: "Vaca" },
-  { id: 2, name: "Toro" },
-  { id: 3, name: "Novilla" },
-  { id: 4, name: "Novillo" },
-  { id: 5, name: "Ternero" },
-  { id: 6, name: "Ternera" },
+  { id: "1", name: "Vaca" },
+  { id: "2", name: "Toro" },
+  { id: "3", name: "Novilla" },
+  { id: "4", name: "Novillo" },
+  { id: "5", name: "Ternero" },
+  { id: "6", name: "Ternera" },
+  { id: "7", name: "Bovino" },
+  { id: "8", name: "Porcino" },
+  { id: "9", name: "Ovino" },
 ];
 
 const MOCK_PADDOCKS = [
-  { id: 1, name: "Potrero A", capacity: 50 },
-  { id: 2, name: "Potrero B", capacity: 30 },
-  { id: 3, name: "Potrero C", capacity: 40 },
+  { id: "1", name: "Potrero A", capacity: 50 },
+  { id: "2", name: "Potrero B", capacity: 30 },
+  { id: "3", name: "Potrero C", capacity: 40 },
+  { id: "4", name: "Corral A-1", capacity: 20 },
+  { id: "5", name: "Corral A-3", capacity: 20 },
+  { id: "6", name: "Corral A-4", capacity: 20 },
+  { id: "7", name: "Corral B-1", capacity: 15 },
+  { id: "8", name: "Corral B-2", capacity: 15 },
+  { id: "9", name: "Corral C-1", capacity: 25 },
 ];
 
 const MOCK_BATCHES = [
-  { id: 1, name: "Lote 1", count: 25 },
-  { id: 2, name: "Lote 2", count: 15 },
-  { id: 3, name: "Lote 3", count: 20 },
+  { id: "1", name: "Lote 1", count: 25 },
+  { id: "2", name: "Lote 2", count: 15 },
+  { id: "3", name: "Lote 3", count: 20 },
 ];
 
 const MOCK_MOVEMENT_TYPES = [
@@ -408,8 +420,17 @@ async function mockGetAnimals(filters) {
 
 async function mockGetAnimalById(id) {
   await delay(200);
-  const animal = mockAnimalsDB.find((a) => a.id === String(id));
-  if (!animal) throw new Error("Animal not found");
+  // Buscamos ignorando tipos (==) y quitando posibles espacios
+  const targetId = String(id).trim();
+  const animal = mockAnimalsDB.find((a) => String(a.id).trim() === targetId);
+
+  if (!animal) {
+    console.warn(
+      `Animal with ID ${id} not found in mock DB. Available IDs:`,
+      mockAnimalsDB.map((a) => a.id),
+    );
+    throw new Error("Animal not found");
+  }
   return animal;
 }
 

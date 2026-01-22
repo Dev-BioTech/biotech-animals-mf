@@ -48,24 +48,57 @@ export function AnimalFormView({
   // Load initial data when editing
   useEffect(() => {
     if (initialData) {
+      // Función para encontrar ID por nombre si el ID no viene directo (común en mocks)
+      const findIdByName = (list, name) => {
+        if (!name) return "";
+        const item = list.find(
+          (i) => i.name?.toLowerCase() === name.toLowerCase(),
+        );
+        return item ? item.id : "";
+      };
+
       setFormData({
         name: initialData.name || "",
         identifier: initialData.identifier || initialData.visualCode || "",
-        breedId: initialData.breedId || "",
-        categoryId: initialData.categoryId || "",
+        breedId:
+          initialData.breedId ||
+          findIdByName(
+            resources.breeds,
+            initialData.breed || initialData.breedName,
+          ) ||
+          "",
+        categoryId:
+          initialData.categoryId ||
+          findIdByName(
+            resources.categories,
+            initialData.type || initialData.categoryName,
+          ) ||
+          "",
         gender: initialData.sex === "M" ? "Macho" : "Hembra",
         birthDate: initialData.birthDate || "",
         weight: initialData.weight || initialData.currentWeight || "",
         height: initialData.height || "",
-        paddockId: initialData.paddockId || "",
-        batchId: initialData.batchId || "",
+        paddockId:
+          initialData.paddockId ||
+          findIdByName(
+            resources.paddocks,
+            initialData.location || initialData.paddockName,
+          ) ||
+          "",
+        batchId:
+          initialData.batchId ||
+          findIdByName(
+            resources.batches,
+            initialData.batch || initialData.batchName,
+          ) ||
+          "",
         initialCost: initialData.initialCost || "",
         notes: initialData.notes || "",
         image: initialData.image || "",
       });
       setImagePreview(initialData.image || "");
     }
-  }, [initialData]);
+  }, [initialData, resources]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
