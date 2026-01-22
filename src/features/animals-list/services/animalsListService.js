@@ -1,4 +1,4 @@
-import { animalService } from "../../../shared/services/animalService";
+import { animalService } from "@shared/services/animalService";
 
 export const animalsListService = {
   getAnimals: async () => {

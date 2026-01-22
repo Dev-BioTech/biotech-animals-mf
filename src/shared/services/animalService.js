@@ -1,5 +1,3 @@
-import apiClient from "../utils/apiClient";
-
 // Mock data
 const MOCK_ANIMALS = [
   {
