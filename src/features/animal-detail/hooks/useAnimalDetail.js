@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { animalDetailService } from "../services/animalDetailService";
+import { animalService } from "@shared/services/animalService";
 
 export function useAnimalDetail(id) {
   const [animal, setAnimal] = useState(null);
@@ -16,7 +16,7 @@ export function useAnimalDetail(id) {
     const fetchDetail = async () => {
       try {
         setLoading(true);
-        const data = await animalDetailService.getAnimalById(id);
+        const data = await animalService.getAnimalById(id);
         if (!data) {
           setError("Animal no encontrado");
         } else {
