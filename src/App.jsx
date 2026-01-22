@@ -7,7 +7,7 @@ import AnimalForm from "./features/animal-form/components/AnimalForm";
 function App() {
   return (
     <BrowserRouter>
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto p-4 md:p-6 lg:p-8">
         <Routes>
           <Route path="/" element={<Navigate to="/animals" />} />
           <Route path="/animals" element={<AnimalsList />} />

@@ -157,17 +157,17 @@ export function AnimalFormView({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-5xl mx-auto p-6"
+      className="max-w-5xl mx-auto p-4 md:p-6"
     >
       <form onSubmit={handleSubmit}>
         <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
+          <CardHeader className="pb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900">
                   {isEditing ? "Editar Animal" : "Nuevo Animal"}
                 </h2>
-                <p className="text-gray-600 mt-1">
+                <p className="text-sm md:text-base text-gray-600 mt-1">
                   {isEditing
                     ? "Actualiza la información del animal"
                     : "Completa los datos del nuevo animal"}
@@ -176,17 +176,17 @@ export function AnimalFormView({
             </div>
           </CardHeader>
 
-          <CardBody>
+          <CardBody className="space-y-6">
             {saveError && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
                 {saveError}
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
               {/* Basic Information */}
               <div className="md:col-span-2">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 pb-2 border-b border-gray-100">
                   Información Básica
                 </h3>
               </div>
@@ -244,7 +244,7 @@ export function AnimalFormView({
 
               {/* Physical Characteristics */}
               <div className="md:col-span-2 mt-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 pb-2 border-b border-gray-100">
                   Características Físicas
                 </h3>
               </div>
@@ -269,7 +269,7 @@ export function AnimalFormView({
 
               {/* Location and Management */}
               <div className="md:col-span-2 mt-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 pb-2 border-b border-gray-100">
                   Ubicación y Gestión
                 </h3>
               </div>
@@ -301,37 +301,49 @@ export function AnimalFormView({
 
               {/* Image Upload */}
               <div className="md:col-span-2 mt-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 pb-2 border-b border-gray-100">
                   Imagen
                 </h3>
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
                   Foto del Animal
                 </label>
-                <div className="flex items-center gap-4">
-                  {imagePreview && (
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="w-24 h-24 rounded-lg object-cover border-2 border-gray-200"
-                    />
-                  )}
-                  <label className="cursor-pointer">
-                    <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                      <Upload size={18} />
-                      <span className="text-sm font-medium">
-                        {imagePreview ? "Cambiar imagen" : "Subir imagen"}
-                      </span>
-                    </div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                  </label>
+                <div className="flex flex-col sm:flex-row items-center gap-6 p-4 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                  <div className="w-full sm:w-32 h-32 rounded-lg overflow-hidden bg-white shadow-inner flex items-center justify-center border border-gray-100">
+                    {imagePreview ? (
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Upload className="w-8 h-8 text-gray-300" />
+                    )}
+                  </div>
+                  <div className="flex-1 text-center sm:text-left">
+                    <p className="text-sm text-gray-500 mb-3">
+                      Sube una foto clara del animal para facilitar su
+                      identificación.
+                    </p>
+                    <label className="cursor-pointer inline-block">
+                      <div className="flex items-center gap-2 px-6 py-2.5 bg-white hover:bg-green-50 text-green-700 border border-green-200 rounded-lg transition-all shadow-sm">
+                        <Upload size={18} />
+                        <span className="text-sm font-bold">
+                          {imagePreview
+                            ? "Cambiar imagen"
+                            : "Seleccionar imagen"}
+                        </span>
+                      </div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
                 </div>
               </div>
 
@@ -341,16 +353,16 @@ export function AnimalFormView({
                   label="Notas"
                   value={formData.notes}
                   onChange={(e) => handleChange("notes", e.target.value)}
-                  placeholder="Observaciones adicionales..."
+                  placeholder="Observaciones adicionales sobre salud, comportamiento, etc..."
                   rows={4}
                 />
               </div>
             </div>
           </CardBody>
 
-          <CardFooter>
-            <div className="flex items-center justify-between w-full">
-              <div>
+          <CardFooter className="bg-gray-50 sm:bg-white border-t sm:border-none p-4 md:p-6">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between w-full gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 {isEditing && onDelete && (
                   <Button
                     type="button"
@@ -358,19 +370,21 @@ export function AnimalFormView({
                     icon={Trash2}
                     onClick={onDelete}
                     disabled={isSaving}
+                    className="w-full sm:w-auto"
                   >
                     Eliminar
                   </Button>
                 )}
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                 <Button
                   type="button"
                   variant="outline"
                   icon={X}
                   onClick={onCancel}
                   disabled={isSaving}
+                  className="w-full sm:w-auto order-2 sm:order-1"
                 >
                   Cancelar
                 </Button>
@@ -380,6 +394,7 @@ export function AnimalFormView({
                   icon={Save}
                   loading={isSaving}
                   disabled={isSaving}
+                  className="w-full sm:w-auto order-1 sm:order-2"
                 >
                   {isEditing ? "Guardar Cambios" : "Crear Animal"}
                 </Button>

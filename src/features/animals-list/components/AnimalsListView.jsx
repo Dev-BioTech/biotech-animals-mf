@@ -48,7 +48,7 @@ export function AnimalsListView({
   return (
     <div className="w-full">
       {/* Header Hero Section */}
-      <AnimalsListHeader onCreate={onCreate} />
+      <AnimalsListHeader onCreate={onCreate} onExport={handleExport} />
 
       {/* Controls */}
       <AnimalsListControls
@@ -74,13 +74,13 @@ export function AnimalsListView({
         />
       ) : (
         <AnimatePresence mode="wait">
-          {viewMode === "grid" ? (
+          {/* Force grid on mobile screens (hidden on sm up if list is selected) */}
+          <div className="block sm:hidden">
             <motion.div
-              key="grid"
+              key="grid-mobile"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              className="grid grid-cols-1 gap-6"
             >
               {filteredAnimals.map((animal, index) => (
                 <AnimalCard
@@ -93,22 +93,46 @@ export function AnimalsListView({
                 />
               ))}
             </motion.div>
-          ) : (
-            <motion.div
-              key="list"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <AnimalsTable
-                animals={filteredAnimals}
-                onViewDetails={onViewDetails}
-                onEdit={onEdit}
-                onDelete={onDelete}
-                actionLoading={actionLoading}
-              />
-            </motion.div>
-          )}
+          </div>
+
+          {/* Desktop/Tablet View Mode Selection */}
+          <div className="hidden sm:block">
+            {viewMode === "grid" ? (
+              <motion.div
+                key="grid-desktop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              >
+                {filteredAnimals.map((animal, index) => (
+                  <AnimalCard
+                    key={animal.id}
+                    animal={animal}
+                    index={index}
+                    onViewDetails={onViewDetails}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                  />
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="list-desktop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <AnimalsTable
+                  animals={filteredAnimals}
+                  onViewDetails={onViewDetails}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                  actionLoading={actionLoading}
+                />
+              </motion.div>
+            )}
+          </div>
         </AnimatePresence>
       )}
     </div>

@@ -135,24 +135,24 @@ export const AnimalsTable = ({
   actionLoading,
 }) => {
   return (
-    <div className="bg-white rounded-3xl shadow-sm overflow-hidden border border-gray-100">
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-100">
+    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="overflow-x-auto scrollbar-hide">
+        <table className="w-full min-w-[800px] lg:min-w-full table-auto">
+          <thead className="bg-gray-50/50 border-b border-gray-100">
             <tr>
-              <th className="text-left py-5 px-6 text-gray-500 font-semibold text-xs uppercase tracking-wider">
+              <th className="text-left py-4 px-4 md:px-6 text-gray-500 font-bold text-xs uppercase tracking-wider">
                 Identidad
               </th>
-              <th className="text-left py-5 px-6 text-gray-500 font-semibold text-xs uppercase tracking-wider">
+              <th className="text-left py-4 px-4 md:px-6 text-gray-500 font-bold text-xs uppercase tracking-wider">
                 Detalles
               </th>
-              <th className="text-left py-5 px-6 text-gray-500 font-semibold text-xs uppercase tracking-wider">
+              <th className="text-left py-4 px-4 md:px-6 text-gray-500 font-bold text-xs uppercase tracking-wider">
                 Peso / Ubicación
               </th>
-              <th className="text-left py-5 px-6 text-gray-500 font-semibold text-xs uppercase tracking-wider">
+              <th className="text-left py-4 px-4 md:px-6 text-gray-500 font-bold text-xs uppercase tracking-wider">
                 Estado
               </th>
-              <th className="text-right py-5 px-8 text-gray-500 font-semibold text-xs uppercase tracking-wider">
+              <th className="text-right py-4 px-4 md:px-8 text-gray-500 font-bold text-xs uppercase tracking-wider">
                 Acciones
               </th>
             </tr>
@@ -171,6 +171,12 @@ export const AnimalsTable = ({
             ))}
           </tbody>
         </table>
+      </div>
+      {/* Mobile hint for scroll */}
+      <div className="lg:hidden py-2 px-4 bg-gray-50/50 text-center border-t border-gray-100">
+        <p className="text-[10px] text-gray-400 font-medium uppercase tracking-widest">
+          Desliza horizontalmente para ver más →
+        </p>
       </div>
     </div>
   );
