@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { AnimalsListView } from "./AnimalsListView";
 import { useAnimals } from "../hooks/useAnimals";
 import { useAuthStore } from "@shared/store/authStore";
+import { LoadingState, EmptyState } from "@shared/components/ui";
+import { Button } from "@shared/components/ui";
+import { AlertTriangle } from "lucide-react";
 
 export default function AnimalsList() {
   const navigate = useNavigate();
@@ -36,32 +39,27 @@ export default function AnimalsList() {
   // Check if no farm is selected
   if (!selectedFarm?.id) {
     return (
-      <div className="p-8 text-center">
-        <div className="bg-yellow-50 text-yellow-800 p-6 rounded-xl border border-yellow-200 inline-block max-w-md">
-          <p className="font-bold text-lg mb-2">⚠️ Granja no seleccionada</p>
-          <p className="mb-4">Por favor selecciona una granja para ver los animales.</p>
-          <button
-            onClick={() => navigate("/farm-selector")}
-            className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
-          >
-            Seleccionar Granja
-          </button>
-        </div>
+      <div className="p-8">
+        <EmptyState
+          icon={AlertTriangle}
+          title="Granja no seleccionada"
+          description="Por favor selecciona una granja para ver los animales."
+          action={
+            <Button
+              variant="primary"
+              onClick={() => navigate("/farm-selector")}
+            >
+              Seleccionar Granja
+            </Button>
+          }
+        />
       </div>
     );
   }
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-[60vh]">
-        <div className="relative w-20 h-20">
-          <div className="absolute top-0 left-0 w-full h-full border-4 border-green-100 rounded-full animate-ping"></div>
-          <div className="absolute top-0 left-0 w-full h-full border-4 border-t-green-600 border-green-200 rounded-full animate-spin"></div>
-        </div>
-      </div>
-    );
+    return <LoadingState message="Cargando animales..." />;
   }
-
 
   return (
     <AnimalsListView

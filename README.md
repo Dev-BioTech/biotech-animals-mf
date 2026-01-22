@@ -1,89 +1,256 @@
-# 🐮 BioTech Animals Microfrontend
-
-<div align="center">
-
-  <img src="https://biotech-shell.vercel.app/BioTech.webp" alt="BioTech Logo" width="200" />
-
-![Animals Banner](https://capsule-render.vercel.app/api?type=waving&color=10b981&height=120&section=header&text=Livestock%20Registry&fontSize=70&animation=fadeIn&fontAlignY=40)
-
-  <br />
-
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-
-  <br />
-
-  <a href="https://biotech-shell.vercel.app/">
-    <img src="https://img.shields.io/badge/🚀_Live_App-Access_Platform-10b981?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
-  </a>
-  <a href="https://github.com/Nikotastic/BioTech-Backend">
-    <img src="https://img.shields.io/badge/🔗_Backend_Repo-View_Code-22c55e?style=for-the-badge&logo=github&logoColor=white" alt="Backend Repo" />
-  </a>
-
-</div>
-
-<br />
+# Animals Module - BioTech Project
 
 ## 📋 Overview
 
-The **Animals Microfrontend** is the core database of the farm. Accessed via the [Shell Application](https://biotech-shell.vercel.app/), it provides detailed profiles, growth tracking, and smart filtering for all livestock.
+The Animals module is a microfrontend responsible for managing livestock animals in the BioTech platform. It provides comprehensive CRUD operations, health tracking, movement registration, and batch management.
 
----
+## 🏗️ Architecture
 
-## ✨ Features
+### Project Structure
 
-- **🏷️ Registry**: Detailed profiles for every animal.
-- **📊 Filtering**: Advanced search and categorization.
-- **📈 Growth Tracking**: Monitor weight and development over time.
-- **📱 Responsive Design**: optimized for field use on tablets/phones.
+```
+src/
+├── features/              # Feature-based modules
+│   ├── animals-list/     # Animal listing feature
+│   ├── animal-detail/    # Animal detail view
+│   └── animal-form/      # Animal creation/editing
+├── shared/               # Shared resources
+│   ├── components/       # Reusable UI components
+│   │   └── ui/          # Base UI components
+│   ├── constants/        # Constants and configurations
+│   │   └── apiEndpoints.js  # API endpoint definitions
+│   ├── services/         # API services
+│   │   └── animalService.js # Animal API service
+│   ├── store/           # State management (Zustand)
+│   ├── utils/           # Utility functions
+│   └── mocks/           # Mock data for development
+└── App.jsx              # Main application component
+```
 
----
+## 🔧 Configuration
 
-## 🛠️ Tech Stack
+### Environment Variables
 
-- **Framework**: React 19
-- **Build Tool**: Vite
-- **Styling**: TailwindCSS
-- **State**: Zustand
+Create a `.env` file based on `.env.example`:
 
----
+```bash
+# Use mock data (true) or real API (false)
+VITE_USE_MOCK_API=true
 
-## 🚀 Getting Started
+# API Gateway URL
+VITE_API_GATEWAY_URL=https://api-gateway-bio-tech.up.railway.app/api
+```
 
-1.  **Clone & Install**
+### API Endpoints
 
-    ```bash
-    git clone https://github.com/Nikotastic/biotech-animals-mf.git
-    npm install
-    ```
+All API endpoints are centralized in `src/shared/constants/apiEndpoints.js`:
 
-2.  **Run Locally**
-    ```bash
-    npm run dev
-    ```
-    Running on: `http://localhost:5002`
+```javascript
+import ANIMALS_ENDPOINTS from "@shared/constants/apiEndpoints";
 
----
+// Example usage
+const url = ANIMALS_ENDPOINTS.BY_ID(animalId);
+```
 
-## 🤝 Contributing & Credits
+## 🎨 UI Components
 
-<div align="center">
+The module includes a comprehensive set of reusable UI components:
 
-**Core Architecture & Development**<br>
-Built with ❤️ by [**@Nikotastic**](https://github.com/Nikotastic)
+### Card Components
 
-  <br>
+```javascript
+import { Card, CardHeader, CardBody, CardFooter } from "@shared/components/ui";
 
-**UX/UI Design & Creative Direction**<br>
-Special thanks to [**@J2rkan**](https://github.com/J2rkan) for the premium design contributions.
+<Card>
+  <CardHeader>Title</CardHeader>
+  <CardBody>Content</CardBody>
+  <CardFooter>Actions</CardFooter>
+</Card>;
+```
 
-</div>
+### Form Controls
 
-<br>
+```javascript
+import { Input, Select, Textarea } from "@shared/components/ui";
 
----
+<Input label="Animal Name" error={errors.name} icon={TagIcon} />;
+```
 
-<div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=10b981&height=100&section=footer" width="100%" />
-</div>
+### Buttons
+
+```javascript
+import { Button, IconButton } from "@shared/components/ui";
+
+<Button variant="primary" icon={PlusIcon}>
+  Add Animal
+</Button>;
+```
+
+### Status Components
+
+```javascript
+import { Badge, StatusBadge } from "@shared/components/ui";
+
+<StatusBadge status="Activo" />;
+```
+
+### Loading States
+
+```javascript
+import { LoadingState, EmptyState, ErrorState } from "@shared/components/ui";
+
+{
+  loading && <LoadingState message="Loading animals..." />;
+}
+{
+  !data.length && <EmptyState title="No animals found" />;
+}
+{
+  error && <ErrorState message={error} onRetry={refetch} />;
+}
+```
+
+## 📡 Services
+
+### Animal Service
+
+The `animalService` provides all animal-related API operations:
+
+```javascript
+import { animalService } from "@shared/services/animalService";
+
+// Get all animals
+const animals = await animalService.getAnimals({ farmId: 1 });
+
+// Get animal by ID
+const animal = await animalService.getAnimalById(id);
+
+// Create animal
+const newAnimal = await animalService.createAnimal(data);
+
+// Update animal
+const updated = await animalService.updateAnimal(id, data);
+
+// Delete animal
+await animalService.deleteAnimal(id);
+
+// Register movement
+await animalService.registerMovement(id, movementData);
+
+// Update weight
+await animalService.updateWeight(id, weightData);
+
+// Get catalogs
+const breeds = await animalService.getBreeds();
+const categories = await animalService.getCategories();
+const paddocks = await animalService.getPaddocks();
+```
+
+## 🎯 Best Practices
+
+### 1. Use Path Aliases
+
+Always use configured path aliases instead of relative imports:
+
+```javascript
+// ✅ Good
+import { animalService } from "@shared/services/animalService";
+import { Button } from "@shared/components/ui";
+
+// ❌ Bad
+import { animalService } from "../../../shared/services/animalService";
+```
+
+### 2. Component Composition
+
+Build complex UIs by composing smaller components:
+
+```javascript
+<Card>
+  <CardHeader>
+    <h2>Animal Details</h2>
+  </CardHeader>
+  <CardBody>
+    <StatusBadge status={animal.status} />
+    <p>{animal.name}</p>
+  </CardBody>
+  <CardFooter>
+    <Button variant="primary">Edit</Button>
+  </CardFooter>
+</Card>
+```
+
+### 3. Error Handling
+
+Always handle errors gracefully:
+
+```javascript
+try {
+  const data = await animalService.getAnimals();
+  setAnimals(data);
+} catch (error) {
+  console.error("Error fetching animals:", error);
+  alertService.error("Failed to load animals");
+}
+```
+
+### 4. Loading States
+
+Provide feedback during async operations:
+
+```javascript
+const [loading, setLoading] = useState(false);
+
+const fetchData = async () => {
+  setLoading(true);
+  try {
+    const data = await animalService.getAnimals();
+    setAnimals(data);
+  } finally {
+    setLoading(false);
+  }
+};
+
+return loading ? <LoadingState /> : <AnimalsList animals={animals} />;
+```
+
+## 🚀 Development
+
+### Running Locally
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+### Mock vs Real API
+
+Toggle between mock and real API by setting `VITE_USE_MOCK_API`:
+
+- `true`: Uses local mock data (no backend required)
+- `false`: Connects to real API gateway
+
+## 📝 Code Style
+
+- Use functional components with hooks
+- Follow React best practices
+- Use JSDoc comments for functions
+- Keep components small and focused
+- Extract reusable logic into custom hooks
+
+## 🔗 Related Modules
+
+- **biotech-shell**: Main shell application
+- **biotech-auth-mf**: Authentication module
+- **biotech-health-mf**: Health records module
+- **biotech-reproduction-mf**: Reproduction tracking module
+
+## 📄 License
+
+Private - BioTech Project

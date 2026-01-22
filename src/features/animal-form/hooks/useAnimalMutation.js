@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { animalFormService } from "../services/animalFormService";
+import { animalService } from "@shared/services/animalService";
 
 export function useAnimalMutation() {
   const [isSaving, setIsSaving] = useState(false);
@@ -9,7 +9,7 @@ export function useAnimalMutation() {
     setIsSaving(true);
     setSaveError(null);
     try {
-      const result = await animalFormService.createAnimal(data);
+      const result = await animalService.createAnimal(data);
       return result;
     } catch (err) {
       setSaveError(err.message || "Error al crear animal");
@@ -23,7 +23,7 @@ export function useAnimalMutation() {
     setIsSaving(true);
     setSaveError(null);
     try {
-      const result = await animalFormService.updateAnimal(id, data);
+      const result = await animalService.updateAnimal(id, data);
       return result;
     } catch (err) {
       setSaveError(err.message || "Error al actualizar animal");

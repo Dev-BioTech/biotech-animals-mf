@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { animalService } from "../../../shared/services/animalService";
+import { animalService } from "@shared/services/animalService";
 import { AnimalFormView } from "./AnimalFormView";
-import { useAnimalDetail } from "../../animal-detail/hooks/useAnimalDetail";
+import { useAnimalDetail } from "@/features/animal-detail/hooks/useAnimalDetail";
 import { useAnimalMutation } from "../hooks/useAnimalMutation";
-import alertService from "../../../shared/utils/alertService";
-import { useAuthStore } from "../../../shared/store/authStore";
+import alertService from "@shared/utils/alertService";
+import { useAuthStore } from "@shared/store/authStore";
 
 export default function AnimalForm() {
   const { id } = useParams();
@@ -47,10 +47,10 @@ export default function AnimalForm() {
           animalService.getBreeds(),
           animalService.getCategories(),
           animalService.getPaddocks(
-            selectedFarm?.id ? { farmId: selectedFarm.id } : {}
+            selectedFarm?.id ? { farmId: selectedFarm.id } : {},
           ),
           animalService.getBatches(
-            selectedFarm?.id ? { farmId: selectedFarm.id } : {}
+            selectedFarm?.id ? { farmId: selectedFarm.id } : {},
           ),
           animalService.getMovementTypes(),
         ]);
@@ -121,7 +121,7 @@ export default function AnimalForm() {
             console.warn("Weight update failed", wErr);
             alertService.warning(
               "Animal guardado, pero falló actualizar el peso",
-              "Atención"
+              "Atención",
             );
           }
         }
@@ -132,7 +132,7 @@ export default function AnimalForm() {
             resources.movementTypes?.find(
               (mt) =>
                 mt.name?.toLowerCase().includes("traslado") ||
-                mt.name?.toLowerCase().includes("cambio")
+                mt.name?.toLowerCase().includes("cambio"),
             ) || resources.movementTypes?.[0];
 
           if (moveType) {
@@ -149,7 +149,7 @@ export default function AnimalForm() {
               console.warn("Movement registration failed", mErr);
               alertService.warning(
                 "Ubicación no actualizada (falló registro de movimiento)",
-                "Atención"
+                "Atención",
               );
             }
           }
@@ -157,14 +157,14 @@ export default function AnimalForm() {
 
         alertService.success(
           `Animal "${formData.name || "sin nombre"}" actualizado correctamente`,
-          "Éxito"
+          "Éxito",
         );
       } else {
         // Create flow
         if (!animalDto.farmId) {
           alertService.warning(
             "Selecciona una granja antes de crear",
-            "Selección Requerida"
+            "Selección Requerida",
           );
           return;
         }
@@ -192,7 +192,7 @@ export default function AnimalForm() {
               (mt) =>
                 mt.name?.toLowerCase().includes("entrada") ||
                 mt.name?.toLowerCase().includes("inicio") ||
-                mt.name?.toLowerCase().includes("traslado")
+                mt.name?.toLowerCase().includes("traslado"),
             ) || resources.movementTypes?.[0];
 
           if (moveType) {
@@ -206,7 +206,7 @@ export default function AnimalForm() {
             try {
               await animalService.registerMovement(
                 createdAnimalId,
-                movementPayload
+                movementPayload,
               );
             } catch (e) {
               console.warn("Initial movement registration failed", e);
@@ -216,7 +216,7 @@ export default function AnimalForm() {
 
         alertService.success(
           `Animal "${formData.name || "sin nombre"}" creado correctamente`,
-          "Éxito"
+          "Éxito",
         );
       }
 
@@ -229,22 +229,22 @@ export default function AnimalForm() {
       if (error.response?.status === 400) {
         alertService.warning(
           "Datos inválidos. Verifica que todos los campos sean correctos",
-          "Datos Inválidos"
+          "Datos Inválidos",
         );
       } else if (error.response?.status === 409) {
         alertService.error(
           "Ya existe un animal con ese identificador",
-          "Error de Conflicto"
+          "Error de Conflicto",
         );
       } else if (error.response?.status === 500) {
         alertService.error(
           "Error del servidor. Intenta nuevamente más tarde",
-          "Error de Servidor"
+          "Error de Servidor",
         );
       } else if (!error.response) {
         alertService.error(
           "No se pudo conectar con el servidor",
-          "Error de Conexión"
+          "Error de Conexión",
         );
       } else {
         alertService.error(`Error al guardar: ${errorMessage}`, "Error");
@@ -259,7 +259,7 @@ export default function AnimalForm() {
   const handleDelete = async () => {
     const result = await alertService.deleteConfirm(
       "",
-      "¿Estás seguro de eliminar este animal? Esta acción no se puede deshacer."
+      "¿Estás seguro de eliminar este animal? Esta acción no se puede deshacer.",
     );
     if (!result.isConfirmed) return;
 

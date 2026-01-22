@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { animalDetailService } from "../services/animalDetailService";
+import { animalService } from "@shared/services/animalService";
 
 export function useAnimalDetail(id) {
   const [animal, setAnimal] = useState(null);
@@ -16,17 +16,23 @@ export function useAnimalDetail(id) {
     const fetchDetail = async () => {
       try {
         setLoading(true);
-        const data = await animalDetailService.getAnimalById(id);
-        if (!data) {
+        const response = await animalService.getAnimalById(id);
+
+        // Manejar tanto { data: animal } como el animal directo
+        const animalData = response?.data || response;
+
+        if (
+          !animalData ||
+          (typeof animalData === "object" &&
+            Object.keys(animalData).length === 0)
+        ) {
           setError("Animal no encontrado");
         } else {
-          // Handle ApiResponse wrapper
-          const animalData = data.data || data;
           setAnimal(animalData);
           setError(null);
         }
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching animal detail:", err);
         setError("Error al cargar el detalle del animal.");
       } finally {
         setLoading(false);
