@@ -8,3 +8,4 @@ export { Button, IconButton } from "./Button";
 export { Badge, StatusBadge } from "./Badge";
 export { Input, Select, Textarea } from "./FormControls";
 export { Spinner, LoadingState, EmptyState, ErrorState } from "./States";
+export { Pagination } from "./Pagination";
