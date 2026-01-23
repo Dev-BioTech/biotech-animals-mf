@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { EmptyState } from "@shared/components/ui";
+import { EmptyState, Pagination } from "@shared/components/ui";
 import { Beef } from "lucide-react";
 import { AnimalsListHeader } from "./AnimalsListHeader";
 import { AnimalsListControls } from "./AnimalsListControls";
@@ -9,36 +9,24 @@ import { AnimalsTable } from "./AnimalsTable";
 
 /**
  * Animals List View Component
- * Main view for displaying animals in grid or list mode
+ * Presentation component for displaying animals in grid or list mode
  */
 export function AnimalsListView({
-  animals,
+  animals = [],
+  searchTerm,
+  onSearchChange,
+  filterType,
+  onFilterChange,
+  currentPage,
+  totalPages,
+  onPageChange,
   onViewDetails,
   onEdit,
   onCreate,
   onDelete,
   actionLoading,
 }) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterType, setFilterType] = useState("all");
   const [viewMode, setViewMode] = useState("grid");
-
-  const safeAnimals = Array.isArray(animals) ? animals : [];
-
-  // Filter animals based on search and filter criteria
-  const filteredAnimals = safeAnimals.filter((animal) => {
-    const name = animal.name || "";
-    const identifier = animal.identifier || animal.visualCode || "";
-    const type = animal.type || animal.categoryName || "";
-
-    const matchesSearch =
-      name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      identifier.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesFilter = filterType === "all" || type === filterType;
-
-    return matchesSearch && matchesFilter;
-  });
 
   const handleExport = () => {
     // TODO: Implement export functionality
@@ -53,16 +41,16 @@ export function AnimalsListView({
       {/* Controls */}
       <AnimalsListControls
         searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
+        onSearchChange={onSearchChange}
         filterType={filterType}
-        onFilterChange={setFilterType}
+        onFilterChange={onFilterChange}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
         onExport={handleExport}
       />
 
       {/* Content */}
-      {filteredAnimals.length === 0 ? (
+      {animals.length === 0 ? (
         <EmptyState
           icon={Beef}
           title="No se encontraron animales"
@@ -90,6 +78,7 @@ export function AnimalsListView({
                   onViewDetails={onViewDetails}
                   onEdit={onEdit}
                   onDelete={onDelete}
+                  actionLoading={actionLoading}
                 />
               ))}
             </motion.div>

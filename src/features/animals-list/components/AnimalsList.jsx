@@ -15,12 +15,13 @@ export default function AnimalsList() {
     loading,
     error,
     actionLoading,
-    refetch,
-    updateWeight,
-    moveToBatch,
-    markAsSold,
-    markAsDead,
-    registerMovement,
+    searchTerm,
+    setSearchTerm,
+    filterType,
+    setFilterType,
+    currentPage,
+    totalPages,
+    setCurrentPage,
     deleteAnimal,
   } = useAnimals();
 
@@ -64,15 +65,17 @@ export default function AnimalsList() {
   return (
     <AnimalsListView
       animals={animals}
+      searchTerm={searchTerm}
+      onSearchChange={setSearchTerm}
+      filterType={filterType}
+      onFilterChange={setFilterType}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      onPageChange={setCurrentPage}
       actionLoading={actionLoading}
       onCreate={handleCreate}
       onViewDetails={handleViewDetails}
       onEdit={handleEdit}
-      onUpdateWeight={updateWeight}
-      onMoveToBatch={moveToBatch}
-      onMarkAsSold={markAsSold}
-      onMarkAsDead={markAsDead}
-      onRegisterMovement={registerMovement}
       onDelete={deleteAnimal}
     />
   );
