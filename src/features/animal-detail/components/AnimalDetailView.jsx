@@ -107,29 +107,36 @@ export function AnimalDetailView({ animal, onBack, onEdit }) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="max-w-7xl mx-auto p-6"
+      className="max-w-7xl mx-auto p-4 md:p-6"
     >
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
         <Button
           variant="ghost"
           icon={ArrowLeft}
           onClick={onBack}
-          className="hover:bg-gray-100"
+          className="hover:bg-gray-100 justify-start"
         >
           Volver
         </Button>
-        <Button variant="primary" icon={Edit2} onClick={onEdit}>
-          Editar Animal
-        </Button>
+        <div className="flex gap-3">
+          <Button
+            variant="primary"
+            icon={Edit2}
+            onClick={onEdit}
+            className="flex-1 sm:flex-none"
+          >
+            Editar Animal
+          </Button>
+        </div>
       </div>
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Image and Basic Info */}
         <div className="lg:col-span-1">
-          <Card>
-            <div className="relative h-80 overflow-hidden rounded-t-xl">
+          <Card className="h-full">
+            <div className="relative h-64 md:h-80 overflow-hidden rounded-t-xl">
               <img
                 src={getAnimalImage()}
                 alt={animal.name}
@@ -147,7 +154,7 @@ export function AnimalDetailView({ animal, onBack, onEdit }) {
                 {animal.identifier || animal.visualCode}
               </p>
 
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
                 <DetailCard
                   label="Categoría"
                   value={animal.type || animal.categoryName || "N/A"}
@@ -180,7 +187,7 @@ export function AnimalDetailView({ animal, onBack, onEdit }) {
               <SectionTitle>Características Físicas</SectionTitle>
             </CardHeader>
             <CardBody>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <InfoItem
                   icon={Weight}
                   color="bg-blue-500"
@@ -215,7 +222,7 @@ export function AnimalDetailView({ animal, onBack, onEdit }) {
               <SectionTitle>Ubicación y Gestión</SectionTitle>
             </CardHeader>
             <CardBody>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <InfoItem
                   icon={MapPin}
                   color="bg-red-500"
@@ -245,18 +252,18 @@ export function AnimalDetailView({ animal, onBack, onEdit }) {
                       key={index}
                       className="p-4 bg-gray-50 rounded-xl border border-gray-200"
                     >
-                      <div className="flex items-start justify-between mb-2">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 mb-2">
                         <span className="font-semibold text-gray-900">
                           {record.type}
                         </span>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-xs md:text-sm text-gray-500">
                           {record.date}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-700 mb-1">
+                      <p className="text-sm text-gray-700 mb-2 leading-relaxed">
                         {record.description}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 italic">
                         Veterinario: {record.veterinarian}
                       </p>
                     </div>
@@ -273,11 +280,11 @@ export function AnimalDetailView({ animal, onBack, onEdit }) {
                 <SectionTitle>Historial de Peso</SectionTitle>
               </CardHeader>
               <CardBody>
-                <div className="space-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {animal.weightHistory.map((record, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                     >
                       <span className="text-sm text-gray-600">
                         {record.date}
@@ -299,7 +306,9 @@ export function AnimalDetailView({ animal, onBack, onEdit }) {
                 <SectionTitle>Notas</SectionTitle>
               </CardHeader>
               <CardBody>
-                <p className="text-gray-700">{animal.notes}</p>
+                <p className="text-gray-700 leading-relaxed italic">
+                  {animal.notes}
+                </p>
               </CardBody>
             </Card>
           )}

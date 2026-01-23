@@ -36,7 +36,7 @@ export function AnimalsListView({
   return (
     <div className="w-full">
       {/* Header Hero Section */}
-      <AnimalsListHeader onCreate={onCreate} />
+      <AnimalsListHeader onCreate={onCreate} onExport={handleExport} />
 
       {/* Controls */}
       <AnimalsListControls
@@ -61,17 +61,40 @@ export function AnimalsListView({
           }
         />
       ) : (
-        <>
-          <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait">
+          {/* Force grid on mobile screens (hidden on sm up if list is selected) */}
+          <div className="block sm:hidden">
+            <motion.div
+              key="grid-mobile"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="grid grid-cols-1 gap-6"
+            >
+              {filteredAnimals.map((animal, index) => (
+                <AnimalCard
+                  key={animal.id}
+                  animal={animal}
+                  index={index}
+                  onViewDetails={onViewDetails}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                  actionLoading={actionLoading}
+                />
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Desktop/Tablet View Mode Selection */}
+          <div className="hidden sm:block">
             {viewMode === "grid" ? (
               <motion.div
-                key="grid"
+                key="grid-desktop"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
               >
-                {animals.map((animal, index) => (
+                {filteredAnimals.map((animal, index) => (
                   <AnimalCard
                     key={animal.id}
                     animal={animal}
@@ -84,13 +107,13 @@ export function AnimalsListView({
               </motion.div>
             ) : (
               <motion.div
-                key="list"
+                key="list-desktop"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
                 <AnimalsTable
-                  animals={animals}
+                  animals={filteredAnimals}
                   onViewDetails={onViewDetails}
                   onEdit={onEdit}
                   onDelete={onDelete}
@@ -98,19 +121,8 @@ export function AnimalsListView({
                 />
               </motion.div>
             )}
-          </AnimatePresence>
-
-          {/* Pagination Component */}
-          {totalPages > 1 && (
-            <div className="mt-10 mb-6">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={onPageChange}
-              />
-            </div>
-          )}
-        </>
+          </div>
+        </AnimatePresence>
       )}
     </div>
   );

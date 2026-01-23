@@ -59,33 +59,33 @@ export const AnimalCard = ({
     >
       <Card className="overflow-hidden group hover:shadow-xl transition-all duration-300">
         {/* Image Section */}
-        <div className="relative h-56 overflow-hidden">
+        <div className="relative h-48 sm:h-56 overflow-hidden">
           <img
             src={getAnimalImage(animal)}
             alt={animal.name}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
 
           {/* Type Badge */}
-          <div className="absolute top-4 left-4">
-            <span className="px-3 py-1 rounded-full text-xs font-bold text-gray-700 bg-white/90 backdrop-blur shadow-sm">
+          <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
+            <span className="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold text-gray-700 bg-white/90 backdrop-blur shadow-sm uppercase tracking-wider">
               {animal.type || animal.categoryName || "Bovino"}
             </span>
           </div>
 
           {/* Animal Name */}
-          <div className="absolute bottom-4 left-4 text-white">
-            <h3 className="text-2xl font-bold leading-none mb-1">
+          <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 text-white">
+            <h3 className="text-xl sm:text-2xl font-bold leading-tight mb-0.5">
               {animal.name}
             </h3>
-            <p className="text-white/80 text-sm font-medium">
+            <p className="text-white/80 text-[10px] sm:text-sm font-medium tracking-wide">
               {animal.identifier || animal.visualCode}
             </p>
           </div>
 
           {/* Status Badge */}
-          <div className="absolute top-4 right-4">
+          <div className="absolute top-3 right-3 sm:top-4 sm:right-4 scale-90 sm:scale-100 origin-top-right">
             <StatusBadge status={animal.status} />
           </div>
         </div>
