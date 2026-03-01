@@ -33,6 +33,8 @@ export default defineConfig({
         "./AnimalDetail":
           "./src/features/animal-detail/components/AnimalDetail.jsx",
         "./AnimalForm": "./src/features/animal-form/components/AnimalForm.jsx",
+        "./CatalogsManager":
+          "./src/features/catalogs/components/CatalogsManager.jsx",
       },
       shared: {
         react: {

@@ -15,7 +15,7 @@ export const ANIMALS_ENDPOINTS = {
   MOVEMENT: (id) => `${API_VERSION}/animals/${id}/movements`,
   BATCH: (id) => `${API_VERSION}/animals/${id}/batch`,
   SELL: (id) => `${API_VERSION}/animals/${id}/sell`,
-  DEATH: (id) => `${API_VERSION}/animals/${id}/death`,
+  DEATH: (id) => `${API_VERSION}/animals/${id}/dead`,
 
   // Catalog endpoints
   BREEDS: `${API_VERSION}/breeds`,

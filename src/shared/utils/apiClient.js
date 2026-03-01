@@ -1,37 +1,55 @@
 import axios from "axios";
 
-// Get API URL from environment or use mock mode
-const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API === "true";
-const API_URL = import.meta.env.VITE_API_GATEWAY_URL || "https://api-gateway-bio-tech.up.railway.app/api";
+const API_URL =
+  import.meta.env.VITE_API_GATEWAY_URL ||
+  "https://api.biotech.159.54.176.254.nip.io/api";
 
 // API client configured for the Gateway
 const apiClient = axios.create({
-  baseURL: USE_MOCK_API ? "http://localhost:9999/mock-api" : API_URL,
+  baseURL: API_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Interceptor to add JWT token in each request
+// Interceptor to add JWT token and Farm ID in each request
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("auth-storage");
-    if (token) {
+    const authStorage = localStorage.getItem("auth-storage");
+    if (authStorage) {
       try {
-        const authData = JSON.parse(token);
-        if (authData?.state?.token) {
-          config.headers.Authorization = `Bearer ${authData.state.token}`;
+        const parsed = JSON.parse(authStorage);
+        const state = parsed.state;
+
+        // 1. Inyectar Token
+        if (state?.token) {
+          config.headers.Authorization = `Bearer ${state.token}`;
+        }
+
+        // 2. Inyectar Farm ID (Contexto de granja)
+        const selectedFarm = state?.selectedFarm;
+        if (selectedFarm && selectedFarm.id) {
+          // Como header
+          config.headers["X-Farm-Id"] = selectedFarm.id;
+
+          // Como param para peticiones GET (muchos endpoints lo piden así)
+          if (config.method === "get") {
+            config.params = {
+              ...config.params,
+              farmId: selectedFarm.id,
+            };
+          }
         }
       } catch (error) {
-        console.error("Error parsing auth token:", error);
+        console.error("Error parsing auth storage:", error);
       }
     }
     return config;
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Interceptor to handle authentication errors
@@ -40,10 +58,10 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("auth-storage");
-      window.location.href = "/login";
+      window.dispatchEvent(new Event("auth-change"));
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default apiClient;
