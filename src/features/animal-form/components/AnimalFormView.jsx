@@ -184,24 +184,6 @@ export function AnimalFormView({
                     : "Establezca los parámetros estratégicos para maximizar el rendimiento de su activo biológico."}
                 </p>
               </div>
-
-              <button
-                type="button"
-                onClick={() => navigate("/catalogs")}
-                className="group flex items-center gap-3 bg-white/10 hover:bg-white/20 backdrop-blur-xl px-6 py-4 rounded-2xl border border-white/10 transition-all active:scale-95 self-start md:self-center"
-              >
-                <div className="flex flex-col items-end">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-green-300">
-                    Configuración Base
-                  </span>
-                  <span className="text-xs font-bold whitespace-nowrap">
-                    GESTIÓN DE CATÁLOGOS
-                  </span>
-                </div>
-                <div className="p-2 bg-white/10 rounded-xl group-hover:bg-green-500 transition-colors">
-                  <Settings className="w-5 h-5" />
-                </div>
-              </button>
             </div>
           </div>
         </div>
