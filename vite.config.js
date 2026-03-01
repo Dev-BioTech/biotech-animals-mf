@@ -11,7 +11,7 @@ export default defineConfig({
       // Alias to access shared services from Shell
       "@shared-services": path.resolve(
         __dirname,
-        "../biotech-shell/src/shared/services"
+        "../biotech-shell/src/shared/services",
       ),
     },
   },
@@ -33,7 +33,8 @@ export default defineConfig({
         "./AnimalDetail":
           "./src/features/animal-detail/components/AnimalDetail.jsx",
         "./AnimalForm": "./src/features/animal-form/components/AnimalForm.jsx",
-        "./AnimalsStore": "./src/shared/store/animalsStore.js",
+        "./CatalogsManager":
+          "./src/features/catalogs/components/CatalogsManager.jsx",
       },
       shared: {
         react: {
