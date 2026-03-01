@@ -56,41 +56,7 @@ export function useAnimals() {
     } catch (err) {
       console.error("Error fetching animals:", err);
 
-      if (err.response?.status === 405 || err.response?.status === 500) {
-        console.warn(
-          `Animals endpoint error (${err.response?.status}). Using demo data.`,
-        );
-        setAnimals([
-          {
-            id: "demo-1",
-            name: "Vaca Demo 1",
-            breed: "Holstein",
-            age: 3,
-            weight: 550,
-            status: "Saludable",
-            farmId: selectedFarm.id,
-          },
-          {
-            id: "demo-2",
-            name: "Vaca Demo 2",
-            breed: "Jersey",
-            age: 2,
-            weight: 450,
-            status: "Saludable",
-            farmId: selectedFarm.id,
-          },
-        ]);
-        alertService.warning(
-          `Modo Demo: Error ${err.response?.status} en el servidor.`,
-          "Modo Demo",
-        );
-        setError(null);
-      } else if (err.response?.status === 404) {
-        setAnimals([]);
-        setError("No se encontraron animales en esta granja.");
-      } else {
-        setError("Error al cargar la lista de animales.");
-      }
+      setError("Error al cargar la lista de animales.");
     } finally {
       setLoading(false);
     }

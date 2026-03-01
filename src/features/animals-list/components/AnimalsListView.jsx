@@ -34,7 +34,7 @@ export function AnimalsListView({
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full px-2 md:px-0">
       {/* Header Hero Section */}
       <AnimalsListHeader onCreate={onCreate} onExport={handleExport} />
 
@@ -63,7 +63,7 @@ export function AnimalsListView({
       ) : (
         <>
           <AnimatePresence mode="wait">
-            {/* Force grid on mobile screens (hidden on sm up if list is selected) */}
+            {/* Force grid on mobile screens */}
             <div className="block sm:hidden">
               <motion.div
                 key="grid-mobile"
