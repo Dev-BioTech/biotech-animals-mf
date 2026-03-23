@@ -102,7 +102,7 @@ export const AnimalCard = ({
             <div className="flex justify-between items-center text-gray-600">
               <span className="font-medium">Peso</span>
               <span className="text-gray-900 font-semibold text-emerald-600">
-                {animal.weight || animal.currentWeight || "0"} kg
+                {animal.weight || animal.currentWeight ? `${animal.weight || animal.currentWeight} kg` : "N/A"}
               </span>
             </div>
             <div className="flex justify-between items-center text-gray-600">

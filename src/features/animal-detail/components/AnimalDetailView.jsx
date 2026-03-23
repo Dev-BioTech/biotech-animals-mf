@@ -91,16 +91,34 @@ export function AnimalDetailView({ animal, onBack, onEdit }) {
     if (!animal.birthDate) return "N/A";
     const birth = new Date(animal.birthDate);
     const today = new Date();
+    
+    if (isNaN(birth.getTime())) return "N/A";
+    
+    const diffTime = today.getTime() - birth.getTime();
+    if (diffTime < 0) return "Aún no ha nacido";
+    
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 30) {
+      return `${diffDays} día${diffDays !== 1 ? "s" : ""}`;
+    }
+
     const months =
       (today.getFullYear() - birth.getFullYear()) * 12 +
-      (today.getMonth() - birth.getMonth());
+      (today.getMonth() - birth.getMonth()) - 
+      (today.getDate() < birth.getDate() ? 1 : 0);
+      
+    if (months < 12) {
+      return `${months} mes${months !== 1 ? "es" : ""}`;
+    }
+
     const years = Math.floor(months / 12);
     const remainingMonths = months % 12;
 
-    if (years > 0) {
-      return `${years} año${years > 1 ? "s" : ""}${remainingMonths > 0 ? ` y ${remainingMonths} mes${remainingMonths > 1 ? "es" : ""}` : ""}`;
+    if (remainingMonths > 0) {
+      return `${years} año${years !== 1 ? "s" : ""} y ${remainingMonths} mes${remainingMonths !== 1 ? "es" : ""}`;
     }
-    return `${months} mes${months > 1 ? "es" : ""}`;
+    return `${years} año${years !== 1 ? "s" : ""}`;
   };
 
   return (
@@ -192,13 +210,13 @@ export function AnimalDetailView({ animal, onBack, onEdit }) {
                   icon={Weight}
                   color="bg-blue-500"
                   label="Peso Actual"
-                  value={`${animal.weight || animal.currentWeight || "0"} kg`}
+                  value={animal.weight || animal.currentWeight ? `${animal.weight || animal.currentWeight} kg` : "N/A"}
                 />
                 <InfoItem
                   icon={Ruler}
                   color="bg-purple-500"
                   label="Altura"
-                  value={`${animal.height || "N/A"} cm`}
+                  value={animal.height && animal.height !== "N/A" ? `${animal.height} cm` : "N/A"}
                 />
                 <InfoItem
                   icon={Calendar}
