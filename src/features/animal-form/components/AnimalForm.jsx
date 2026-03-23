@@ -97,6 +97,9 @@ export default function AnimalForm() {
           ? parseInt(formData.paddockId)
           : resources.paddocks.find((p) => p.name === formData.location)?.id ||
             undefined,
+        batchId: formData.batchId
+          ? parseInt(formData.batchId)
+          : undefined,
         sex: formData.gender === "Macho" ? "M" : "F",
         farmId: selectedFarm?.id || undefined,
       };
@@ -227,10 +230,45 @@ export default function AnimalForm() {
       const errorMessage = error.response?.data?.message || error.message;
 
       if (error.response?.status === 400) {
-        alertService.warning(
-          "Datos inválidos. Verifica que todos los campos sean correctos",
-          "Datos Inválidos",
-        );
+        let details = "Verifica que todos los campos obligatorios estén completos.";
+        
+        const fieldNames = {
+          "$.birthDate": "Fecha de nacimiento",
+          "command": "Formulario",
+          "categoryId": "Especie / Categoría",
+          "breedId": "Fase / Raza",
+          "visualCode": "Identificador visual",
+          "name": "Nombre del animal",
+          "paddockId": "Ubicación (Potrero)",
+          "batchId": "Asignación de Lote",
+          "weight": "Peso",
+          "height": "Altura",
+          "sex": "Género",
+          "initialCost": "Costo proyectado"
+        };
+
+        const validationErrors = error.response?.data?.errors;
+        if (validationErrors && typeof validationErrors === 'object') {
+          const errorList = Object.entries(validationErrors)
+            .map(([field, msgs]) => {
+              const friendlyName = fieldNames[field] || field;
+              // Remove some technical jargon from the backend message if possible
+              const cleanMsgs = msgs.map(m => m.replace(/The JSON value could not be converted.*/, "El valor ingresado no es válido."));
+              return `<li><b>${friendlyName}:</b> ${cleanMsgs.join(", ")}</li>`;
+            })
+            .join("");
+          if (errorList) {
+            details = `<ul style="text-align: left; list-style-type: disc; padding-left: 20px; margin-top: 10px;">${errorList}</ul>`;
+          }
+        }
+
+        alertService.custom({
+          icon: "warning",
+          title: "Datos Inválidos",
+          html: `<div style="font-size: 14px;">Por favor corrige los siguientes campos:${details}</div>`,
+          iconColor: "#f59e0b",
+          confirmButtonText: "Aceptar",
+        });
       } else if (error.response?.status === 409) {
         alertService.error(
           "Ya existe un animal con ese identificador",
