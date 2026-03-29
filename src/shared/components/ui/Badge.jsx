@@ -36,13 +36,26 @@ export const StatusBadge = ({ status, className = "" }) => {
     Vendido: "info",
     Muerto: "danger",
     Inactivo: "default",
+    ACTIVE: "success",
+    SOLD: "info",
+    DEAD: "danger",
+    CONSUMED: "default",
   };
 
-  const variant = statusMap[status] || "default";
+  const labelMap = {
+    ACTIVE: "Activo",
+    SOLD: "Vendido",
+    DEAD: "Muerto",
+    CONSUMED: "Inactivo"
+  };
+
+  const safeStatus = status ? String(status) : "";
+  const variant = statusMap[safeStatus] || "default";
+  const displayLabel = labelMap[safeStatus] || safeStatus || "Sin estado";
 
   return (
     <Badge variant={variant} className={className}>
-      {status}
+      {displayLabel}
     </Badge>
   );
 };

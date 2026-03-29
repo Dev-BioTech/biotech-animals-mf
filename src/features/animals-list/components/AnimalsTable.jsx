@@ -93,7 +93,7 @@ export const AnimalTableRow = ({
 
       {/* Status */}
       <td className="py-4 px-6">
-        <StatusBadge status={animal.status} />
+        <StatusBadge status={animal.status || animal.currentStatus || animal.CurrentStatus} />
       </td>
 
       {/* Actions */}
