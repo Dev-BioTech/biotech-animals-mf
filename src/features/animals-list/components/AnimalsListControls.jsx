@@ -28,7 +28,7 @@ export const AnimalsListControls = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-3xl shadow-sm p-4 md:p-6 border border-gray-100 mb-8 flex flex-col xl:flex-row gap-4 items-stretch xl:items-center"
+      className="bg-white rounded-3xl shadow-sm p-4 md:p-6 border border-gray-100 mb-8 flex max-xl:flex-col xl:flex-row gap-4 items-stretch xl:items-center"
     >
       {/* Search Input */}
       <div className="flex-1 min-w-0">
@@ -38,12 +38,12 @@ export const AnimalsListControls = ({
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Buscar animal..."
           icon={Search}
-          className="bg-gray-50 border-none focus:bg-white text-sm md:text-base"
+          className="bg-gray-50 border-none focus:bg-white max-md:text-sm md:text-base"
         />
       </div>
 
       {/* Filters Group */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+      <div className="flex max-sm:flex-col sm:flex-row items-stretch sm:items-center gap-3">
         {/* Type Filter */}
         <div className="relative flex-1 sm:w-64">
           <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
@@ -52,11 +52,11 @@ export const AnimalsListControls = ({
             onChange={(e) => onFilterChange(e.target.value)}
             options={typeOptions}
             placeholder=""
-            className="w-full pl-10 bg-gray-50 border-none focus:bg-white text-sm md:text-base"
+            className="w-full pl-10 bg-gray-50 border-none focus:bg-white max-md:text-sm md:text-base"
           />
         </div>
 
-        <div className="hidden sm:flex items-center gap-3">
+        <div className="max-sm:hidden sm:flex items-center gap-3">
           <div className="h-8 w-px bg-gray-200 mx-1" />
 
           {/* View Mode Toggle */}

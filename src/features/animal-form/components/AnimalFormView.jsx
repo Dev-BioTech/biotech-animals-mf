@@ -36,6 +36,7 @@ export function AnimalFormView({
   saveError,
   resources = { breeds: [], categories: [], paddocks: [], batches: [] },
   onDelete,
+  identifierError,
 }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -147,6 +148,8 @@ export function AnimalFormView({
   // Styles from the shared image
   const inputStyles =
     "w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-white focus:ring-4 focus:ring-green-500/5 focus:border-green-500/30 outline-none transition-all font-semibold text-gray-800 placeholder:text-gray-300 shadow-sm";
+  const selectStyles =
+    "w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-white focus:ring-4 focus:ring-green-500/5 focus:border-green-500/30 outline-none transition-all font-semibold text-gray-800 shadow-sm appearance-none cursor-pointer bg-[url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")] bg-no-repeat bg-[right_1rem_center]";
   const labelStyles =
     "flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 px-1";
   const sectionTitleStyles =
@@ -193,13 +196,6 @@ export function AnimalFormView({
         onSubmit={handleSubmit}
         className="p-6 md:p-10 lg:p-14 space-y-10 md:space-y-12"
       >
-        {saveError && (
-          <div className="p-5 bg-red-50/50 border border-red-100 rounded-2xl md:rounded-3xl text-red-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-4 animate-pulse">
-            <AlertCircle className="w-5 h-5" />
-            {saveError}
-          </div>
-        )}
-
         {/* SECTION 1: IDENTITY */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
           <div className="space-y-6 md:space-y-8">
@@ -209,71 +205,81 @@ export function AnimalFormView({
             </div>
 
             <div className="grid grid-cols-1 gap-6">
-              <div>
-                <label className={labelStyles}>Nombre del Animal</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => handleChange("name", e.target.value)}
-                  placeholder="Ej: Estrella del Norte"
-                  className={`${inputStyles} ${errors.name ? "border-red-200" : ""}`}
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className={labelStyles}>Nombre del Animal</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => handleChange("name", e.target.value)}
+                    placeholder="Ej: Estrella del Norte"
+                    className={`${inputStyles} ${errors.name ? "border-red-200" : ""}`}
+                  />
+                </div>
+                <div>
+                  <label className={labelStyles}>Fecha de Nacimiento</label>
+                  <input
+                    type="date"
+                    max={new Date().toISOString().split("T")[0]}
+                    value={formData.birthDate || ""}
+                    onChange={(e) => handleChange("birthDate", e.target.value)}
+                    className={`${inputStyles} ${errors.birthDate ? "border-red-200" : ""}`}
+                  />
+                </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-end">
-                  <div className="flex-1 min-w-0">
-                    <label className={labelStyles}>Especie / Categoría</label>
-                    <div className="flex gap-2">
-                      <select
-                        value={formData.categoryId}
-                        onChange={(e) =>
-                          handleChange("categoryId", e.target.value)
-                        }
-                        className={inputStyles}
-                      >
-                        <option value="">Seleccionar...</option>
-                        {resources.categories.map((c) => (
-                          <option key={c.id} value={c.id}>
-                            {c.name}
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        type="button"
-                        title="Administrar Categorías"
-                        onClick={() => navigate("/catalogs")}
-                        className="p-3 bg-gray-50 rounded-2xl border border-gray-100 hover:bg-green-50 hover:text-green-700 hover:border-green-200 transition-all active:scale-95 shrink-0"
-                      >
-                        <Plus className="w-5 h-5" />
-                      </button>
-                    </div>
+                <div className="flex-1 min-w-0">
+                  <label className={labelStyles}>Especie / Categoría</label>
+                  <div className="flex gap-2 items-center">
+                    <select
+                      value={formData.categoryId}
+                      onChange={(e) =>
+                        handleChange("categoryId", e.target.value)
+                      }
+                      className={`${selectStyles} flex-1`}
+                    >
+                      <option value="">Seleccionar...</option>
+                      {resources.categories.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      title="Administrar Categorías"
+                      onClick={() => navigate("/catalogs")}
+                      className="p-3 bg-gray-50 rounded-2xl border border-gray-100 hover:bg-green-50 hover:text-green-700 hover:border-green-200 transition-all active:scale-95 shrink-0"
+                    >
+                      <Plus className="w-5 h-5" />
+                    </button>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <label className={labelStyles}>Fase / Raza</label>
-                    <div className="flex gap-2">
-                      <select
-                        value={formData.breedId}
-                        onChange={(e) =>
-                          handleChange("breedId", e.target.value)
-                        }
-                        className={inputStyles}
-                      >
-                        <option value="">Seleccionar...</option>
-                        {resources.breeds.map((b) => (
-                          <option key={b.id} value={b.id}>
-                            {b.name}
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        type="button"
-                        title="Administrar Razas"
-                        onClick={() => navigate("/catalogs")}
-                        className="p-3 bg-gray-50 rounded-2xl border border-gray-100 hover:bg-green-50 hover:text-green-700 hover:border-green-200 transition-all active:scale-95 shrink-0"
-                      >
-                        <Plus className="w-5 h-5" />
-                      </button>
-                    </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <label className={labelStyles}>Fase / Raza</label>
+                  <div className="flex gap-2 items-center">
+                    <select
+                      value={formData.breedId}
+                      onChange={(e) =>
+                        handleChange("breedId", e.target.value)
+                      }
+                      className={`${selectStyles} flex-1`}
+                    >
+                      <option value="">Seleccionar...</option>
+                      {resources.breeds.map((b) => (
+                        <option key={b.id} value={b.id}>
+                          {b.name}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      title="Administrar Razas"
+                      onClick={() => navigate("/catalogs")}
+                      className="p-3 bg-gray-50 rounded-2xl border border-gray-100 hover:bg-green-50 hover:text-green-700 hover:border-green-200 transition-all active:scale-95 shrink-0"
+                    >
+                      <Plus className="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -293,8 +299,20 @@ export function AnimalFormView({
                   value={formData.identifier}
                   onChange={(e) => handleChange("identifier", e.target.value)}
                   placeholder="Ej: BOV-001"
-                  className={inputStyles}
+                  className={`${inputStyles} ${(errors.identifier || identifierError) ? "border-red-400 ring-2 ring-red-200" : ""}`}
                 />
+                {identifierError && (
+                  <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-red-600">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {identifierError}
+                  </p>
+                )}
+                {errors.identifier && !identifierError && (
+                  <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-red-600">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    El identificador es requerido
+                  </p>
+                )}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
@@ -302,7 +320,7 @@ export function AnimalFormView({
                   <select
                     value={formData.gender}
                     onChange={(e) => handleChange("gender", e.target.value)}
-                    className={inputStyles}
+                    className={selectStyles}
                   >
                     <option value="Macho">Macho (Semental)</option>
                     <option value="Hembra">Hembra (Matriz)</option>
@@ -310,7 +328,7 @@ export function AnimalFormView({
                 </div>
                 <div>
                   <label className={labelStyles}>Prioridad / Estado</label>
-                  <select className={inputStyles}>
+                  <select className={selectStyles}>
                     <option>Activo (Saludable)</option>
                     <option>Observación</option>
                     <option>Tratamiento</option>
@@ -392,7 +410,7 @@ export function AnimalFormView({
                   <select
                     value={formData.paddockId}
                     onChange={(e) => handleChange("paddockId", e.target.value)}
-                    className={inputStyles}
+                    className={selectStyles}
                   >
                     <option value="">No asignado</option>
                     {resources.paddocks.map((p) => (
@@ -417,7 +435,7 @@ export function AnimalFormView({
               <select
                 value={formData.batchId}
                 onChange={(e) => handleChange("batchId", e.target.value)}
-                className={inputStyles}
+                className={selectStyles}
               >
                 <option value="">Sin lote</option>
                 {resources.batches.map((b) => (

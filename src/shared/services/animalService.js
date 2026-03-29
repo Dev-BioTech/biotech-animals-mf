@@ -24,8 +24,9 @@ export const animalService = {
         `${ANIMALS_ENDPOINTS.BASE}?${params.toString()}`,
       );
 
-      // Resilient data extraction
-      return response.data?.data || response.data || [];
+      const data = response.data?.data || response.data || [];
+      console.log("DEBUG [ANIMALS DATA]:", data);
+      return data;
     } catch (error) {
       console.error("Error fetching animals:", error);
       throw error;
