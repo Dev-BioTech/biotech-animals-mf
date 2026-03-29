@@ -116,9 +116,9 @@ export default function AnimalForm() {
         // Handle Weight Update if provided
         if (formData.weight) {
           const weightPayload = {
-            id: id ? parseInt(id) : undefined, // Some endpoints expect ID in payload too
-            weight: parseFloat(formData.weight),
-            date: new Date().toISOString().split("T")[0],
+            animalId: parseInt(id),
+            newWeight: parseFloat(formData.weight),
+            weighDate: new Date().toISOString().split("T")[0],
             userId: user?.id || 1,
           };
           try {
@@ -180,8 +180,9 @@ export default function AnimalForm() {
         // If weight provided on creation, try to update it using the new ID
         if (createdAnimalId && formData.weight) {
           const weightPayload = {
-            weight: parseFloat(formData.weight),
-            date: new Date().toISOString().split("T")[0],
+            animalId: parseInt(createdAnimalId),
+            newWeight: parseFloat(formData.weight),
+            weighDate: new Date().toISOString().split("T")[0],
             userId: user?.id || 1,
           };
           try {
