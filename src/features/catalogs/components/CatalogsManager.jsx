@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   Settings,
   Plus,
@@ -20,6 +21,8 @@ const CATALOG_TYPES = [
   {
     id: "breeds",
     name: "Razas",
+    singularName: "Raza",
+    gender: "F",
     icon: Tags,
     color: "text-blue-600",
     bg: "bg-blue-50",
@@ -27,6 +30,8 @@ const CATALOG_TYPES = [
   {
     id: "categories",
     name: "Categorías",
+    singularName: "Categoría",
+    gender: "F",
     icon: Box,
     color: "text-purple-600",
     bg: "bg-purple-50",
@@ -34,6 +39,8 @@ const CATALOG_TYPES = [
   {
     id: "paddocks",
     name: "Potreros",
+    singularName: "Potrero",
+    gender: "M",
     icon: MapIcon,
     color: "text-green-600",
     bg: "bg-green-50",
@@ -41,6 +48,8 @@ const CATALOG_TYPES = [
   {
     id: "batches",
     name: "Lotes",
+    singularName: "Lote",
+    gender: "M",
     icon: Box,
     color: "text-orange-600",
     bg: "bg-orange-50",
@@ -55,8 +64,34 @@ export default function CatalogsManager() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newItemName, setNewItemName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [counts, setCounts] = useState({
+    breeds: null,
+    categories: null,
+    paddocks: null,
+    batches: null,
+  });
 
   const selectedFarm = useAuthStore((state) => state.selectedFarm);
+
+  const fetchAllCounts = async () => {
+    try {
+      const filters = { farmId: selectedFarm?.id };
+      const [b, c, p, ba] = await Promise.all([
+        animalService.getBreeds().catch(() => []),
+        animalService.getCategories().catch(() => []),
+        animalService.getPaddocks(filters).catch(() => []),
+        animalService.getBatches(filters).catch(() => []),
+      ]);
+      setCounts({
+        breeds: Array.isArray(b) ? b.length : 0,
+        categories: Array.isArray(c) ? c.length : 0,
+        paddocks: Array.isArray(p) ? p.length : 0,
+        batches: Array.isArray(ba) ? ba.length : 0,
+      });
+    } catch (e) {
+      console.error("Error pre-fetching counts", e);
+    }
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -96,6 +131,10 @@ export default function CatalogsManager() {
     fetchData();
   }, [activeTab, selectedFarm?.id]);
 
+  useEffect(() => {
+    fetchAllCounts();
+  }, [selectedFarm?.id]);
+
   const handleCreate = async (e) => {
     e.preventDefault();
     if (!newItemName.trim()) return;
@@ -128,6 +167,7 @@ export default function CatalogsManager() {
       alertService.success(`${newItemName} creado correctamente`);
       setNewItemName("");
       setIsModalOpen(false);
+      setCounts((prev) => ({ ...prev, [activeTab]: (prev[activeTab] || 0) + 1 }));
       fetchData();
     } catch (error) {
       console.error("Error creating item:", error);
@@ -139,6 +179,91 @@ export default function CatalogsManager() {
 
   const filteredItems = items.filter((item) =>
     item.name?.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  const activeCatalog = CATALOG_TYPES.find((t) => t.id === activeTab);
+  const titlePrefix = activeCatalog?.gender === "F" ? "NUEVA" : "NUEVO";
+  const labelPrefix = activeCatalog?.gender === "F" ? "NOMBRE DE LA" : "NOMBRE DEL";
+
+  const modalContent = (
+    <AnimatePresence>
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsModalOpen(false)}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border border-green-50"
+          >
+            {/* Modal Header with Gradient */}
+            <div className="bg-gradient-to-br from-green-700 via-green-800 to-green-900 p-8 relative overflow-hidden text-white">
+              <div className="absolute top-0 right-0 p-6 opacity-10 transform translate-x-4 -translate-y-4 scale-150">
+                {React.createElement(activeCatalog.icon, {
+                  className: "w-24 h-24",
+                })}
+              </div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-1">
+                  <Plus className="w-5 h-5 text-green-300" />
+                  <h2 className="text-xl font-black tracking-tight uppercase">
+                    {titlePrefix} {activeCatalog.singularName}
+                  </h2>
+                </div>
+                <p className="text-green-100 text-xs font-medium opacity-80 uppercase tracking-widest">
+                  Registro de recurso base para la granja
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleCreate} className="p-8 space-y-6">
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 px-1">
+                  {labelPrefix} {activeCatalog.singularName}
+                </label>
+                <input
+                  autoFocus
+                  type="text"
+                  required
+                  value={newItemName}
+                  onChange={(e) => setNewItemName(e.target.value)}
+                  placeholder="Escriba el nombre aquí..."
+                  className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-green-500/10 focus:border-green-500 outline-none font-bold text-gray-800 transition-all shadow-inner"
+                />
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="flex-1 px-8 py-4 rounded-2xl text-gray-400 hover:text-gray-900 font-black text-[10px] uppercase tracking-widest transition-all"
+                >
+                  Descartar
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSaving || !newItemName.trim()}
+                  className="flex-1 px-10 py-4 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-green-900/10 transition-all border border-green-500 disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isSaving ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <CheckCircle2 className="w-5 h-5 text-green-300" />
+                  )}
+                  {isSaving ? "Guardando..." : "Confirmar Registro"}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
   );
 
   return (
@@ -192,11 +317,9 @@ export default function CatalogsManager() {
                   />
                   {tab.name}
                   <span
-                    className={`ml-1 text-xs px-2 py-0.5 rounded-full ${isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}
+                    className={`ml-1 text-xs px-2 py-0.5 rounded-full ${isActive ? "bg-green-100 text-green-700 font-black" : "bg-gray-100 text-gray-500 font-bold"}`}
                   >
-                    {!loading && activeTab === tab.id
-                      ? filteredItems.length
-                      : "-"}
+                    {counts[tab.id] !== null ? counts[tab.id] : "-"}
                   </span>
                 </button>
               );
@@ -296,94 +419,8 @@ export default function CatalogsManager() {
         )}
       </main>
 
-      {/* Quick Add Modal */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border border-green-50"
-            >
-              {/* Modal Header with Gradient */}
-              <div className="bg-gradient-to-br from-green-700 via-green-800 to-green-900 p-8 relative overflow-hidden text-white">
-                <div className="absolute top-0 right-0 p-6 opacity-10 transform translate-x-4 -translate-y-4 scale-150">
-                  {React.createElement(
-                    CATALOG_TYPES.find((t) => t.id === activeTab).icon,
-                    { className: "w-24 h-24" },
-                  )}
-                </div>
-                <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-1">
-                    <Plus className="w-5 h-5 text-green-300" />
-                    <h2 className="text-xl font-black tracking-tight uppercase">
-                      Nuevo{" "}
-                      {CATALOG_TYPES.find((t) => t.id === activeTab).name.slice(
-                        0,
-                        -1,
-                      )}
-                    </h2>
-                  </div>
-                  <p className="text-green-100 text-xs font-medium opacity-80 uppercase tracking-widest">
-                    Registro de recurso base para la granja
-                  </p>
-                </div>
-              </div>
-
-              <form onSubmit={handleCreate} className="p-8 space-y-6">
-                <div>
-                  <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 px-1">
-                    Nombre del{" "}
-                    {CATALOG_TYPES.find((t) => t.id === activeTab).name.slice(
-                      0,
-                      -1,
-                    )}
-                  </label>
-                  <input
-                    autoFocus
-                    type="text"
-                    required
-                    value={newItemName}
-                    onChange={(e) => setNewItemName(e.target.value)}
-                    placeholder="Escriba el nombre aquí..."
-                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-green-500/10 focus:border-green-500 outline-none font-bold text-gray-800 transition-all shadow-inner"
-                  />
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(false)}
-                    className="flex-1 px-8 py-4 rounded-2xl text-gray-400 hover:text-gray-900 font-black text-[10px] uppercase tracking-widest transition-all"
-                  >
-                    Descartar
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSaving || !newItemName.trim()}
-                    className="flex-1 px-10 py-4 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-green-900/10 transition-all border border-green-500 disabled:opacity-50 flex items-center justify-center gap-2"
-                  >
-                    {isSaving ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : (
-                      <CheckCircle2 className="w-5 h-5 text-green-300" />
-                    )}
-                    {isSaving ? "Guardando..." : "Confirmar Registro"}
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      {/* Quick Add Modal via Portal */}
+      {typeof document !== "undefined" ? createPortal(modalContent, document.body) : modalContent}
     </div>
   );
 }
