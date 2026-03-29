@@ -86,7 +86,7 @@ export const AnimalCard = ({
 
           {/* Status Badge */}
           <div className="absolute top-3 right-3 sm:top-4 sm:right-4 scale-90 sm:scale-100 origin-top-right">
-            <StatusBadge status={animal.status} />
+            <StatusBadge status={animal.status || animal.currentStatus || animal.CurrentStatus} />
           </div>
         </div>
 

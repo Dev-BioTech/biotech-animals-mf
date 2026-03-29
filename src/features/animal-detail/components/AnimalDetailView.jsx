@@ -161,7 +161,7 @@ export function AnimalDetailView({ animal, onBack, onEdit }) {
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-4 right-4">
-                <StatusBadge status={animal.status || "Activo"} />
+                <StatusBadge status={animal.status || animal.currentStatus || animal.CurrentStatus || "Activo"} />
               </div>
             </div>
             <CardBody>
