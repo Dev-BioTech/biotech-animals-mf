@@ -228,7 +228,7 @@ export function AnimalDetailView({ animal, onBack, onEdit }) {
                   icon={DollarSign}
                   color="bg-yellow-500"
                   label="Costo Inicial"
-                  value={`$${animal.initialCost || "0"}`}
+                  value={`$ ${Number(animal.initialCost || 0).toLocaleString('es-CO')}`}
                 />
               </div>
             </CardBody>

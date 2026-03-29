@@ -112,8 +112,28 @@ export function AnimalFormView({
   }, [initialData, resources]);
 
   const handleChange = (field, value) => {
+    if (field === "weight") {
+      const num = Number(value);
+      if (value !== "" && (num < 0 || num > 3000)) return; // Max 3000 kg
+    }
+    if (field === "height") {
+      const num = Number(value);
+      if (value !== "" && (num < 0 || num > 400)) return; // Max 400 cm
+    }
+    if (field === "initialCost") {
+      const num = Number(value);
+      if (value !== "" && num < 0) return; // No negative cost
+    }
+
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  const handleNumericKeyDown = (e) => {
+    // Previene visualmente que el usuario escriba signos matemáticos o exponentes en el campo
+    if (["-", "+", "e", "E"].includes(e.key)) {
+      e.preventDefault();
+    }
   };
 
   const handleImageUpload = (e) => {
@@ -357,6 +377,7 @@ export function AnimalFormView({
                   step="0.1"
                   value={formData.weight}
                   onChange={(e) => handleChange("weight", e.target.value)}
+                  onKeyDown={handleNumericKeyDown}
                   className={`${inputStyles} pr-12`}
                 />
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-gray-400 uppercase">
@@ -372,6 +393,7 @@ export function AnimalFormView({
                   step="1"
                   value={formData.height}
                   onChange={(e) => handleChange("height", e.target.value)}
+                  onKeyDown={handleNumericKeyDown}
                   className={`${inputStyles} pr-12`}
                 />
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-gray-400 uppercase">
@@ -386,14 +408,15 @@ export function AnimalFormView({
               <div className="relative">
                 <input
                   type="number"
-                  step="0.01"
+                  step="1000"
                   value={formData.initialCost}
                   onChange={(e) => handleChange("initialCost", e.target.value)}
+                  onKeyDown={handleNumericKeyDown}
                   className={inputStyles}
-                  placeholder="0.00"
+                  placeholder="Ej: 1500000"
                 />
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400">
-                  $ USD
+                  $ COP
                 </span>
               </div>
             </div>
