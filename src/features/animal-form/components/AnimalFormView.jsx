@@ -36,6 +36,7 @@ export function AnimalFormView({
   saveError,
   resources = { breeds: [], categories: [], paddocks: [], batches: [] },
   onDelete,
+  identifierError,
 }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -298,8 +299,20 @@ export function AnimalFormView({
                   value={formData.identifier}
                   onChange={(e) => handleChange("identifier", e.target.value)}
                   placeholder="Ej: BOV-001"
-                  className={inputStyles}
+                  className={`${inputStyles} ${(errors.identifier || identifierError) ? "border-red-400 ring-2 ring-red-200" : ""}`}
                 />
+                {identifierError && (
+                  <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-red-600">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {identifierError}
+                  </p>
+                )}
+                {errors.identifier && !identifierError && (
+                  <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-red-600">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    El identificador es requerido
+                  </p>
+                )}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>

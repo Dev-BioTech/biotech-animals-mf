@@ -31,12 +31,16 @@ apiClient.interceptors.request.use(
         // 2. Inject farmId as query param for GET requests.
         //    The Animals endpoint needs farmId as a query param.
         //    Catalog endpoints (breeds, categories, etc.) ignore unknown params.
-        const selectedFarm = state?.selectedFarm;
-        if (selectedFarm?.id && config.method === "get") {
-          config.params = {
-            ...config.params,
-            farmId: selectedFarm.id,
-          };
+        const rawFarmId = state?.selectedFarm?.id;
+        if (rawFarmId) {
+          const cleanFarmId = typeof rawFarmId === "string" ? rawFarmId.split(":")[0] : rawFarmId;
+
+          if (config.method === "get") {
+            config.params = {
+              ...config.params,
+              farmId: cleanFarmId,
+            };
+          }
         }
       } catch (error) {
         console.error("Error parsing auth storage:", error);

@@ -24,6 +24,8 @@ export default function AnimalForm() {
   const { createAnimal, updateAnimal, isSaving, saveError } =
     useAnimalMutation();
 
+  const [identifierError, setIdentifierError] = useState("");
+
   const [resources, setResources] = useState({
     breeds: [],
     categories: [],
@@ -72,6 +74,7 @@ export default function AnimalForm() {
   }, [selectedFarm?.id]);
 
   const handleSave = async (formData) => {
+    setIdentifierError(""); // Reset inline error on each save attempt
     try {
       // Map frontend data to Backend DTO
       const animalDto = {
@@ -113,9 +116,9 @@ export default function AnimalForm() {
         // Handle Weight Update if provided
         if (formData.weight) {
           const weightPayload = {
-            id: id ? parseInt(id) : undefined, // Some endpoints expect ID in payload too
-            weight: parseFloat(formData.weight),
-            date: new Date().toISOString().split("T")[0],
+            animalId: parseInt(id),
+            newWeight: parseFloat(formData.weight),
+            weighDate: new Date().toISOString().split("T")[0],
             userId: user?.id || 1,
           };
           try {
@@ -177,8 +180,9 @@ export default function AnimalForm() {
         // If weight provided on creation, try to update it using the new ID
         if (createdAnimalId && formData.weight) {
           const weightPayload = {
-            weight: parseFloat(formData.weight),
-            date: new Date().toISOString().split("T")[0],
+            animalId: parseInt(createdAnimalId),
+            newWeight: parseFloat(formData.weight),
+            weighDate: new Date().toISOString().split("T")[0],
             userId: user?.id || 1,
           };
           try {
@@ -270,15 +274,37 @@ export default function AnimalForm() {
           confirmButtonText: "Aceptar",
         });
       } else if (error.response?.status === 409) {
-        alertService.error(
-          "Ya existe un animal con ese identificador",
-          "Error de Conflicto",
-        );
+        const dupMsg = "Ya existe un animal con ese identificador visual. Usa un código diferente.";
+        setIdentifierError(dupMsg);
+        alertService.error(dupMsg, "Identificador Duplicado");
       } else if (error.response?.status === 500) {
-        alertService.error(
-          "Error del servidor. Intenta nuevamente más tarde",
-          "Error de Servidor",
-        );
+        // The backend sometimes returns 500 for unique constraint violations
+        // (duplicate visualCode) instead of a proper 409. Detect it by inspecting the message.
+        const serverMsg = (
+          error.response?.data?.message ||
+          error.response?.data?.title ||
+          error.response?.data ||
+          ""
+        ).toString().toLowerCase();
+
+        const isDuplicate =
+          serverMsg.includes("duplicate") ||
+          serverMsg.includes("unique") ||
+          serverMsg.includes("already exists") ||
+          serverMsg.includes("visualcode") ||
+          serverMsg.includes("ix_") ||
+          serverMsg.includes("constraint");
+
+        if (isDuplicate) {
+          const dupMsg = "Ya existe un animal con ese identificador visual. Usa un código diferente.";
+          setIdentifierError(dupMsg);
+          alertService.error(dupMsg, "Identificador Duplicado");
+        } else {
+          alertService.error(
+            "Error interno del servidor. Intenta nuevamente más tarde.",
+            "Error de Servidor",
+          );
+        }
       } else if (!error.response) {
         alertService.error(
           "No se pudo conectar con el servidor",
@@ -343,6 +369,7 @@ export default function AnimalForm() {
       isSaving={isSaving}
       saveError={saveError}
       resources={resources}
+      identifierError={identifierError}
     />
   );
 }
