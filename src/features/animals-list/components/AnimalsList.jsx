@@ -58,13 +58,10 @@ export default function AnimalsList() {
     );
   }
 
-  if (loading) {
-    return <LoadingState message="Cargando animales..." />;
-  }
-
   return (
     <AnimalsListView
       animals={animals}
+      loading={loading}
       searchTerm={searchTerm}
       onSearchChange={setSearchTerm}
       filterType={filterType}

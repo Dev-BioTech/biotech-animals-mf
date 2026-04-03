@@ -41,13 +41,62 @@ export const Spinner = ({ size = "md", className = "" }) => {
 };
 
 /**
- * Loading State component with message
+ * Premium Skeleton component for loading states
  */
-export const LoadingState = ({ message = "Cargando...", size = "lg" }) => {
+const Skeleton = ({ className }) => (
+  <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
+);
+
+/**
+ * Loading State component - Now with premium Skeletons
+ */
+export const LoadingState = () => {
   return (
-    <div className="flex flex-col items-center justify-center py-12">
-      <Spinner size={size} />
-      <p className="mt-4 text-gray-600 font-medium">{message}</p>
+    <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Header Skeleton */}
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center">
+        <div className="space-y-3">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <Skeleton className="h-10 w-32 rounded-xl" />
+      </div>
+
+      {/* Hero/Stat Skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex justify-between items-start mb-4">
+              <Skeleton className="h-12 w-12 rounded-xl" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+            <Skeleton className="h-6 w-3/4 mb-2" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        ))}
+      </div>
+
+      {/* Table/List Skeleton */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-4 border-b border-gray-50 flex gap-4">
+          <Skeleton className="h-10 flex-1 rounded-xl" />
+          <Skeleton className="h-10 w-32 rounded-xl" />
+        </div>
+        <div className="p-6 space-y-4">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
+              <div className="flex items-center gap-4">
+                <Skeleton className="h-12 w-12 rounded-full" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+              </div>
+              <Skeleton className="h-8 w-24 rounded-lg" />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

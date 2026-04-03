@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { EmptyState, Pagination } from "@shared/components/ui";
+import { EmptyState, Pagination, LoadingState } from "@shared/components/ui";
 import { Beef } from "lucide-react";
 import { AnimalsListHeader } from "./AnimalsListHeader";
 import { AnimalsListControls } from "./AnimalsListControls";
@@ -13,6 +13,7 @@ import { AnimalsTable } from "./AnimalsTable";
  */
 export function AnimalsListView({
   animals = [],
+  loading,
   searchTerm,
   onSearchChange,
   filterType,
@@ -34,11 +35,11 @@ export function AnimalsListView({
   };
 
   return (
-    <div className="w-full px-2 md:px-0">
-      {/* Header Hero Section */}
+    <div className="w-full px-2 md:px-0 font-sans">
+      {/* Header Hero Section - Always Visible */}
       <AnimalsListHeader onCreate={onCreate} onExport={handleExport} />
 
-      {/* Controls */}
+      {/* Controls - Always Visible */}
       <AnimalsListControls
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
@@ -49,19 +50,37 @@ export function AnimalsListView({
         onExport={handleExport}
       />
 
-      {/* Content */}
-      {animals.length === 0 ? (
-        <EmptyState
-          icon={Beef}
-          title="No se encontraron animales"
-          description={
-            searchTerm || filterType !== "all"
-              ? "Intenta ajustar los filtros de búsqueda"
-              : "Comienza agregando tu primer animal"
-          }
-        />
+      {/* Content - Skeleton or Real Content */}
+      {loading ? (
+        <div className="mt-8">
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-4">
+                  <div className="h-48 bg-gray-100 rounded-2xl w-full" />
+                  <div className="h-6 bg-gray-200 rounded w-3/4" />
+                  <div className="h-4 bg-gray-100 rounded w-1/2" />
+                  <div className="flex gap-2 pt-2">
+                    <div className="h-10 flex-1 bg-gray-100 rounded-xl" />
+                    <div className="h-10 flex-1 bg-gray-100 rounded-xl" />
+                  </div>
+                </div>
+              ))}
+           </div>
+        </div>
+      ) : animals.length === 0 ? (
+        <div className="mt-8">
+          <EmptyState
+            icon={Beef}
+            title="No se encontraron animales"
+            description={
+              searchTerm || filterType !== "all"
+                ? "Intenta ajustar los filtros de búsqueda"
+                : "Comienza agregando tu primer animal"
+            }
+          />
+        </div>
       ) : (
-        <>
+        <div className="mt-8">
           <AnimatePresence mode="wait">
             {viewMode === "grid" ? (
               <motion.div
@@ -112,7 +131,7 @@ export function AnimalsListView({
               />
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   );
